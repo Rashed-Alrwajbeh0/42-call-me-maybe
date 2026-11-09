@@ -1,0 +1,21 @@
+[project]
+name = "call-me-mybe"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "flake8>=7.5.0",
+    "llm-sdk",
+    "mypy>=2.4.1",
+    "numpy>=2.5.4",
+    "pydantic>=2.14.3",
+]
+
+[tool.uv.workspace]
+members = [
+    "attachments_project_ai/llm_sdk",
+]
+
+[tool.uv.sources]
+llm-sdk = { workspace = true }
