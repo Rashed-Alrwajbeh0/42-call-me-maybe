@@ -117,6 +117,7 @@ dependencies = [
     { name = "mypy" },
     { name = "numpy" },
     { name = "pydantic" },
+    { name = "torch" },
 ]
 
 [package.metadata]
@@ -126,6 +127,7 @@ requires-dist = [
     { name = "mypy", specifier = ">=2.4.1" },
     { name = "numpy", specifier = ">=2.5.4" },
     { name = "pydantic", specifier = ">=2.14.3" },
+    { name = "torch", specifier = ">=2.15.0" },
 ]
 
 [[package]]
