@@ -18,6 +18,7 @@ def send_promet(
     answer = []
     i = 0
     while i < 100:
+        print(i)
         logits = model.get_logits_from_input_ids(TokenIDS)
         max_priority = int(np.argmax(logits))
         answer.append(max_priority)
@@ -54,18 +55,28 @@ def determain_type(functions, func_name, parameter_name):
         if i["name"] == func_name:
             return i["parameters"][parameter_name]["type"]
 
+def determain_function(functions, func_name) -> map:
+    for i in functions:
+        if i["name"] == func_name:
+            return i
 
 def convert_to_map(string: str, promet, functions, model):
     split_str = string.split(",")
-    split_str = [item.strip().strip("\n").replace("\"", "") for item in split_str]
+    split_str = [item.strip().strip("\n").replace("\"", "").replace("\'", "") for item in split_str]
     answer = {}
     answer.update({"prompt": promet})
     answer.update({"name": split_str[0]})
     tmep = {}
+    j = 0
+    current_function = determain_function(functions, split_str[0])
+    current_function_paramters_keys = list(current_function["parameters"].keys())
+    current_function_paramters = current_function["parameters"]
     for i in range(1, len(split_str)):
-        a, b = split_str[i].split(":")
-        b = b.strip()
-        tmep.update({f"{a}": casting_with_ai(model=model, data=b, type_to=determain_type(functions, split_str[0], a))})
+        #print(current_function_paramters)
+        current_parameter = current_function_paramters_keys[j]
+        #print(current_parameter)
+        tmep.update({f"{current_parameter}": casting_with_ai(model=model, data=split_str[i], type_to=current_function_paramters[current_parameter]["type"])})
+        j+=1
     answer.update({"parameters": tmep})
     return(answer)
 
@@ -76,9 +87,9 @@ def determain_the_function(model, functions, promet, vocap):
         "\n i will give you some functions and for each function i will give you a description for it wich decsripe how the function work, "
         f"also i will send you tha paramters of each function and the return type of it and here are the functions:\n{functions}."
         "your job is to help me with detrmaine wich function to use by give me the name of the function and what is the value of each parameter that used in the function"
-        "the output must be like this format:\nThe value of ths function name, the first parameter name:the value of it.\n"
-        "and if there are more one paramter just ad (,) and then write (The Parameter name:the value of it).\nthis is some examples of the outuput format:\n"
-        "fn_add_numbers, a:6, b:8\nfn_add_numbers, a:10, b:63\netc...\n"
+        "the output must be like this format:\nThe value of ths function name,the value of the first parameter.\n"
+        "and if there are more one paramter just add (,) and then write (the value of it).\nthis is some examples of the outuput format:\n"
+        "fn_add_numbers,6,8\nfn_add_numbers,0,63\nfn_substitute_string_with_regex,Replace all digits in \"a1b2\" with X,\\\\d,X\netc...\n"
         "be sure that it is forbidden the output contain any thing else!!"
         "<|im_end|>\n"
         "<|im_start|>user\n"
